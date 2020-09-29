@@ -12,7 +12,10 @@ class LayoutChar {
   LayoutChar({this.source, this.destination, this.page});
 }
 
-dynamic layout(int width, int height, List<int> text, BitmapFont font) {
+List<LayoutChar> layout(
+    int width, int height, List<int> text, BitmapFont font) {
+  final ret = <LayoutChar>[];
+
   int lineHeight = font.common.lineHeight;
 
   // TODO handle if height is less than lineHeight
@@ -21,25 +24,31 @@ dynamic layout(int width, int height, List<int> text, BitmapFont font) {
   int currentTop = 0;
   int currentBase = currentTop + font.common.base;
 
-  for(int char in text) {
+  for (int char in text) {
     final bmChar = font.chars[char];
-    if(bmChar != null) {
+    if (bmChar != null) {
       // TODO print unprintable character?
       continue;
     }
 
     // TODO kerning
-    final nextX = currentX + bmChar.xAdvance;
-    if(nextX > width) {
+    int nextX = currentX + bmChar.xAdvance;
+    if (nextX > width) {
       currentX = 0;
+      nextX = 0;
       currentTop += lineHeight;
       currentBase = currentTop + font.common.base;
       // TODO check if height exceeds
     }
 
+    ret.add(LayoutChar(
+        source: Rectangle<int>(bmChar.x, bmChar.y, bmChar.width, bmChar.height),
+        destination: Rectangle<int>(currentX + bmChar.xOffset,
+            currentTop + bmChar.yOffset, bmChar.width, bmChar.height),
+        page: bmChar.page));
 
-    // TODO
+    currentX = nextX;
   }
 
-  // TODO
+  return ret;
 }
