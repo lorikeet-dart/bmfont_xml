@@ -9,7 +9,7 @@ class BitmapFont {
 
   final Common common;
 
-  final List<Kerning> kernings;
+  final Map<int, Map<int, int>> kernings;
 
   final Map<int, Char> chars;
 
@@ -19,7 +19,7 @@ class BitmapFont {
         'info': info?.toJson(),
         'pages': pages?.map((e) => e.toJson())?.toList(),
         'common': common?.toJson(),
-        'kernings': kernings?.map((e) => e.toJson())?.toList(),
+        'kernings': Kerning.mapToList(kernings).map((e) => e.toJson()).toList(),
         'chars': chars?.values?.map((e) => e.toJson())?.toList(),
       };
 
@@ -226,6 +226,33 @@ class Kerning {
         'second': second,
         'amount': amount,
       };
+
+  static Map<int, Map<int, int>> listToMap(Iterable<Kerning> list) {
+    final ret = <int, Map<int, int>>{};
+
+    for (final kerning in list) {
+      Map<int, int> map = ret[kerning.first];
+      map ??= ret[kerning.first] = {};
+      map[kerning.second] = kerning.amount;
+    }
+
+    return ret;
+  }
+
+  static List<Kerning> mapToList(Map<int, Map<int, int>> map) {
+    if(map == null) return [];
+
+    final ret = <Kerning>[];
+
+    for (final first in map.keys) {
+      final m = map[first];
+      for (final second in m.keys) {
+        ret.add(Kerning(first: first, second: second, amount: m[second]));
+      }
+    }
+
+    return ret;
+  }
 }
 
 class Page {

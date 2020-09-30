@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'dart:math';
 
 import 'package:bmfont_xml/bmfont_xml.dart';
 
@@ -10,6 +10,10 @@ class LayoutChar {
   final int page;
 
   LayoutChar({this.source, this.destination, this.page});
+
+  @override
+  String toString() =>
+      'LayoutChar(source: $source, destination: ${destination}, page: $page)';
 }
 
 List<LayoutChar> layout(
@@ -17,6 +21,7 @@ List<LayoutChar> layout(
   final ret = <LayoutChar>[];
 
   int lineHeight = font.common.lineHeight;
+  int previousChar;
 
   // TODO handle if height is less than lineHeight
 
@@ -26,12 +31,22 @@ List<LayoutChar> layout(
 
   for (int char in text) {
     final bmChar = font.chars[char];
-    if (bmChar != null) {
+    if (bmChar == null) {
       // TODO print unprintable character?
       continue;
     }
 
-    // TODO kerning
+    // Kerning
+    int kerning = 0;
+    if (previousChar != null) {
+      final m = font.kernings[previousChar];
+      if (m != null) {
+        kerning = m[char] ?? 0;
+      }
+    }
+    currentX -= kerning;
+
+    // Check if we can fit the char in this line
     int nextX = currentX + bmChar.xAdvance;
     if (nextX > width) {
       currentX = 0;
@@ -39,6 +54,9 @@ List<LayoutChar> layout(
       currentTop += lineHeight;
       currentBase = currentTop + font.common.base;
       // TODO check if height exceeds
+      previousChar = null;
+    } else {
+      previousChar = char;
     }
 
     ret.add(LayoutChar(

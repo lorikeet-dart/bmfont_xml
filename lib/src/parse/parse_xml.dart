@@ -109,12 +109,15 @@ Kerning _parseKerning(XmlElement node) {
       amount: getIntAttributeByLocalName(node, 'amount'));
 }
 
-List<Kerning> _parseKernings(XmlElement node) {
-  return node.children
+Map<int, Map<int, int>> _parseKernings(XmlElement node) {
+  if (node == null) return {};
+
+  final kernings = node.children
       .whereType<XmlElement>()
       .where((e) => e.name.local == 'kerning')
       .map(_parseKerning)
       .toList();
+  return Kerning.listToMap(kernings);
 }
 
 Char _parseChar(XmlElement node) {

@@ -4,5 +4,6 @@
 library bmfont_xml;
 
 export 'src/bmfont_xml_base.dart';
+export 'src/parse/parse.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+export 'src/layout/layout.dart';

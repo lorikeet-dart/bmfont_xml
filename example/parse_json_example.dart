@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:bmfont_xml/bmfont_xml.dart';
-import 'package:bmfont_xml/src/parse/parse_json.dart';
-import 'package:bmfont_xml/src/parse/parse_xml.dart';
 import 'dart:convert';
 
 void main() {

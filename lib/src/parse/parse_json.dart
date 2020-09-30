@@ -72,9 +72,11 @@ Kerning _parseKerning(Map map) {
       first: map['first'], second: map['second'], amount: map['amount']);
 }
 
-List<Kerning> _parseKernings(List list) {
-  if (list == null) return <Kerning>[];
-  return list.cast<Map>().map(_parseKerning).toList();
+Map<int, Map<int, int>> _parseKernings(List list) {
+  if (list == null) return {};
+
+  final kernings = list.cast<Map>().map(_parseKerning).toList();
+  return Kerning.listToMap(kernings);
 }
 
 Char _parseChar(Map map) {
